@@ -3,12 +3,14 @@ from rest_framework.routers import SimpleRouter
 
 from cinema.views import(
     GenreViewSet,
-    ActorViewSet
+    ActorViewSet,
+    CinemaHallViewSet
 )
 
 router = SimpleRouter()
 router.register("genres", GenreViewSet)
 router.register("actors", ActorViewSet)
+router.register("cinema_halls", CinemaHallViewSet)
 
 app_name = "cinema"
 
