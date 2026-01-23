@@ -36,6 +36,50 @@ class CinemaHallSerializer(serializers.ModelSerializer):
         )
 
 
+class MovieSerializer(serializers.ModelSerializer):
+    genres = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Genre.objects.all(),
+    )
+    actors = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Actor.objects.all(),
+    )
+
+    class Meta:
+        model = Movie
+        fields = (
+            "id",
+            "title",
+            "description",
+            "duration",
+            "genres",
+            "actors",
+        )
+
+    def create(self, validated_data):
+        genres_data = validated_data.pop("genres", None)
+        actors_data = validated_data.pop("actors", None)
+        movie = Movie.objects.create(**validated_data)
+        if genres_data:
+            movie.genres.set(genres_data)
+        if actors_data:
+            movie.actors.set(actors_data)
+        return movie
+
+    def update(self, instance, validated_data):
+        genres_data = validated_data.pop("genres", None)
+        actors_data = validated_data.pop("actors", None)
+        if genres_data:
+            instance.genres.set(genres_data)
+        if actors_data:
+            instance.actors.set(actors_data)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
+
 class MovieListSerializer(serializers.ModelSerializer):
     genres = serializers.StringRelatedField(many=True, read_only=True)
     actors = serializers.StringRelatedField(many=True, read_only=True)
@@ -55,4 +99,3 @@ class MovieListSerializer(serializers.ModelSerializer):
 class MovieRetrieveSerializer(MovieListSerializer):
     genres = GenreSerializer(many=True, read_only=True)
     actors = ActorSerializer(many=True, read_only=True)
-
