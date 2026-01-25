@@ -1,10 +1,12 @@
 from rest_framework import serializers
+from rest_framework.relations import PrimaryKeyRelatedField
 
 from cinema.models import (
     Genre,
     Actor,
     CinemaHall,
-    Movie
+    Movie,
+    MovieSession
 )
 
 
@@ -99,3 +101,35 @@ class MovieListSerializer(serializers.ModelSerializer):
 class MovieRetrieveSerializer(MovieListSerializer):
     genres = GenreSerializer(many=True, read_only=True)
     actors = ActorSerializer(many=True, read_only=True)
+
+
+class MovieSessionListSerializer(serializers.ModelSerializer):
+    movie = PrimaryKeyRelatedField(
+        queryset=Movie.objects.all(),
+        write_only=True
+    )
+    cinema_hall = PrimaryKeyRelatedField(
+        queryset=CinemaHall.objects.all(),
+        write_only=True
+    )
+    movie_title = serializers.StringRelatedField(
+        source="movie.title", read_only=True
+    )
+    cinema_hall_name = serializers.StringRelatedField(
+        source="cinema_hall.name", read_only=True
+    )
+    cinema_hall_capacity = serializers.IntegerField(
+        source="cinema_hall.capacity", read_only=True
+    )
+
+    class Meta:
+        model = MovieSession
+        fields = (
+            "id",
+            "show_time",
+            "movie_title",
+            "cinema_hall_name",
+            "cinema_hall_capacity",
+            "movie",
+            "cinema_hall"
+        )
