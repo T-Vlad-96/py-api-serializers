@@ -135,9 +135,9 @@ class MovieSessionListSerializer(serializers.ModelSerializer):
         )
 
 
-class MovieSessionRetrieveSerializer(serializers.ModelSerializer):
-    movie = MovieListSerializer(read_only=True)
-    cinema_hall = CinemaHallSerializer(read_only=True)
+class MovieSessionSerializer(serializers.ModelSerializer):
+    movie = PrimaryKeyRelatedField(queryset=Movie.objects.all())
+    cinema_hall = PrimaryKeyRelatedField(queryset=CinemaHall.objects.all())
 
     class Meta:
         model = MovieSession
@@ -146,5 +146,9 @@ class MovieSessionRetrieveSerializer(serializers.ModelSerializer):
             "show_time",
             "movie",
             "cinema_hall"
-
         )
+
+
+class MovieSessionRetrieveSerializer(MovieSessionSerializer):
+    movie = MovieListSerializer(read_only=True)
+    cinema_hall = CinemaHallSerializer(read_only=True)

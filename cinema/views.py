@@ -15,7 +15,8 @@ from cinema.serializers import (
     MovieRetrieveSerializer,
     MovieSerializer,
     MovieSessionListSerializer,
-    MovieSessionRetrieveSerializer
+    MovieSessionRetrieveSerializer,
+    MovieSessionSerializer
 )
 
 
@@ -67,5 +68,6 @@ class MovieSessionViewSet(ModelViewSet):
             self.serializer_class = MovieSessionListSerializer
         elif self.action == "retrieve":
             self.serializer_class = MovieSessionRetrieveSerializer
+        elif self.action in ("create", "update", "partial_update"):
+            self.serializer_class = MovieSessionSerializer
         return self.serializer_class
-
