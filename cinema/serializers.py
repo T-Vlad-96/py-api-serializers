@@ -23,6 +23,7 @@ class ActorSerializer(serializers.ModelSerializer):
             "id",
             "first_name",
             "last_name",
+            "full_name",
         )
 
 
@@ -85,6 +86,7 @@ class MovieSerializer(serializers.ModelSerializer):
 class MovieListSerializer(serializers.ModelSerializer):
     genres = serializers.StringRelatedField(many=True, read_only=True)
     actors = serializers.StringRelatedField(many=True, read_only=True)
+    # figure out how to display actors 'full_name' fields instead of pk
 
     class Meta:
         model = Movie
@@ -101,6 +103,17 @@ class MovieListSerializer(serializers.ModelSerializer):
 class MovieRetrieveSerializer(MovieListSerializer):
     genres = GenreSerializer(many=True, read_only=True)
     actors = ActorSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Movie
+        fields = (
+            "id",
+            "title",
+            "description",
+            "duration",
+            "genres",
+            "actors",
+        )
 
 
 class MovieSessionListSerializer(serializers.ModelSerializer):
