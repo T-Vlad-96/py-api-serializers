@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField
+from typing import Dict
 
 from cinema.models import (
     Genre,
@@ -60,7 +61,7 @@ class MovieSerializer(serializers.ModelSerializer):
             "actors",
         )
 
-    def create(self, validated_data) -> Movie:
+    def create(self, validated_data: Dict[str]) -> Movie:
         genres_data = validated_data.pop("genres", None)
         actors_data = validated_data.pop("actors", None)
         movie = Movie.objects.create(**validated_data)
@@ -70,7 +71,7 @@ class MovieSerializer(serializers.ModelSerializer):
             movie.actors.set(actors_data)
         return movie
 
-    def update(self, instance, validated_data) -> Movie:
+    def update(self, instance: Movie, validated_data: Dict[str]) -> Movie:
         genres_data = validated_data.pop("genres", None)
         actors_data = validated_data.pop("actors", None)
         if genres_data:
